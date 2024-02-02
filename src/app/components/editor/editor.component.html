@@ -1,0 +1,7 @@
+<mat-label *ngIf="label?.length">
+    {{ label }}
+</mat-label>
+<div [formGroup]="formParent" class="mt-2">
+    <editor [apiKey]="tinyKey" [formControlName]="formName" [init]="getInit()" (onExecCommand)="changed()"></editor>
+</div>
+<!-- code | image | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat -->

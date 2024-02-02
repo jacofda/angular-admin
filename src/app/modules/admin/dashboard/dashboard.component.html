@@ -1,0 +1,45 @@
+<div
+    class="flex flex-col flex-auto w-full"
+    *ngIf="isLoading; else elseLoaded"
+
+>
+    <div class="flex my-auto justify-center flex-wrap w-full max-w-screen-xl mx-auto p-6 md:p-8">
+        <mat-spinner [diameter]="70"></mat-spinner>
+    </div>
+</div>
+
+<ng-template #elseLoaded>
+    <div class="flex flex-col flex-auto w-full">
+        <div class="bg-card flex flex-col w-full max-w-screen-xl mx-auto px-6 sm:px-8">
+            <div class="flex flex-col sm:flex-row flex-auto sm:items-center min-w-0 my-8 sm:my-12">
+                <div class="flex flex-auto items-center min-w-0">
+                    <div class="flex-0 w-16 h-16 rounded-full overflow-hidden">
+                        <mow-avatar class="w-full h-full object-cover" [user]="user" />
+                    </div>
+            
+                    <div class="flex flex-col min-w-0 ml-4">
+                        <div class="text-2xl md:text-5xl font-semibold tracking-tight leading-7 md:leading-snug truncate ng-star-inserted">
+                            <ng-container *transloco="let t">
+                                {{ t('welcome-back', { name: user.name }) }}
+                            </ng-container>
+                        </div>
+            
+                        <div class="flex items-center">
+                            <i class="fa fa-bell text-secondary"></i>
+                            <div class="ml-1.5 leading-6 truncate text-secondary">
+                                You have 2 new messages and 15 new tasks
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div
+            class="flex flex-col flex-auto w-full"
+            *ngIf="_counts"
+        >
+            <!-- widget vari -->
+        </div>
+    </div>
+</ng-template>

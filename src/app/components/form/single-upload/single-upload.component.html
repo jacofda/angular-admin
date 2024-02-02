@@ -1,0 +1,49 @@
+<div class="flex-auto bg-slate-100 rounded-3xl">
+    <!-- <mat-label class="mt-5">{{ label }}</mat-label> -->
+    <!-- <br /> -->
+
+    <div class="flex flex-row items-center justify-between">
+        <div>
+            <span class="pl-4 pr-3">
+                <b>{{ label }}</b>
+            </span>
+        </div>
+        <div>
+            <button mat-flat-button type="button" color="primary" (click)="openFileManager()">
+                <mat-icon svgIcon="heroicons_outline:plus"></mat-icon>
+                <span class="mx-1">Seleziona</span>
+            </button>
+        </div>
+    </div>
+</div>
+<div class="flex-auto">
+    <div
+        class="flex content-center items-center flex-row m-2 shadow rounded-2xl cursor-pointer bg-card p-6"
+        *ngIf="documento && selectedFile">
+        <div class="relative">
+            <mat-icon class="icon-size-14 text-hint opacity-50" [svgIcon]="'heroicons_solid:document'"></mat-icon>
+            <div
+                class="absolute left-0 bottom-0 px-1.5 rounded text-sm font-semibold leading-5 text-white"
+                [class.bg-red-600]="getExtension(selectedFile) === 'PDF'"
+                [class.bg-blue-600]="getExtension(selectedFile) === 'DOC'"
+                [class.bg-green-600]="getExtension(selectedFile) === 'XLS'"
+                [class.bg-gray-600]="getExtension(selectedFile) === 'TXT'"
+                [class.bg-amber-600]="getExtension(selectedFile) === 'JPG'">
+                {{ getExtension(selectedFile).toUpperCase() }}
+            </div>
+        </div>
+        <div class="flex-1" *ngIf="selectedFile">
+            <mat-form-field class="w-full pl-2 pr-2 fuse-mat-dense">
+                <mat-label>Titolo</mat-label>
+                <input matInput [(ngModel)]="file.name" (input)="emit()" />
+            </mat-form-field>
+        </div>
+        <div>
+            <a mat-flat-button [color]="'primary'" target="_blank" [href]="generateFilePath(selectedFile, 1024)">
+                <span class="ml-2 mr-1">Download</span>
+            </a>
+        </div>
+    </div>
+
+    <img *ngIf="selectedFile && !documento" [src]="generateFilePath(selectedFile, 1024)" class="object-cover max-h-72 mt-4 rounded-2xl" />
+</div>

@@ -1,0 +1,48 @@
+
+
+
+<div>
+    <div class="bg-card rounded-2xl shadow px-8 py-4">
+        <div class="flex w-full sm:hidden">
+            <mat-form-field class="fuse-mat-dense w-full">
+                <mat-label>Tab Attiva</mat-label>
+                <mat-select [(value)]="activeTab" [compareWith]="selectCompareTabsWith">
+                    <mat-option value="">
+                        <i class="fad fa-home mr-2"></i>
+                        <span>Principale</span>
+                    </mat-option>
+
+                    <mat-option *ngFor="let tab of tabs$ | async" [value]="tab">
+                        <i *ngIf="tab?.icon" [ngClass]="[tab?.icon, 'mr-2']"></i>
+                        <span>{{ tab?.title }}</span>
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+
+        <nav class="hidden sm:flex space-x-4" aria-label="Tabs">
+            <a href="#" [ngClass]="[!activeTab ? 'bg-primary text-on-primary' : 'text-secondary hover:text-on-accent-100 hover:bg-accent-100', 'rounded-md px-3 py-2 text-sm font-medium']" (click)="onTabSelect(null); false">
+                <i [ngClass]="[!activeTab ? 'text-on-primary' : 'text-gray-400 group-hover:text-gray-500 dark:text-white', 'fad fa-home mr-2']"></i>
+                <span>Principale</span>
+            </a>
+            <a href="#" *ngFor="let tab of tabs$ | async" [ngClass]="[isActive(tab) ? 'bg-primary text-on-primary' : 'text-secondary hover:text-on-accent-100 hover:bg-accent-100', 'rounded-md px-3 py-2 text-sm font-medium']" (click)="onTabSelect(tab); false">
+                <i *ngIf="tab?.icon" [ngClass]="[isActive(tab) ? 'text-on-primary' : 'text-gray-400 group-hover:text-gray-500 dark:text-white', tab?.icon, 'mr-2']"></i>
+                <span>{{ tab?.title }}</span>
+            </a>
+        </nav>
+    </div>
+
+
+
+    <div class="mt-5">
+        <div [hidden]="!!activeTab">
+            <ng-content></ng-content>
+        </div>
+
+        <div *ngFor="let tab of tabs$ | async" [hidden]="!isActive(tab)">
+            <div *ngIf="tab?.childComponent" class="flex flex-col p-8 pb-0 bg-card rounded-2xl shadow overflow-hidden min-h-full">
+                <ng-template [ngComponentOutlet]="tab?.childComponent" [ndcDynamicInputs]="tab?.bind"></ng-template>
+            </div>
+        </div>
+    </div>
+</div>

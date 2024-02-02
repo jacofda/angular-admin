@@ -1,0 +1,315 @@
+<div class="flex flex-col flex-auto min-w-0">
+    <!-- Header -->
+    <div
+    *ngIf="!child"
+    class="flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between p-6 sm:py-8 sm:px-10 border-b bg-card dark:bg-transparent">
+    <div class="flex-1 min-w-0">
+        <!-- Breadcrumbs -->
+        <div class="flex flex-wrap items-center font-medium">
+            <div>
+                <a routerLink="/programmi" class="whitespace-nowrap text-primary-500">Programmi</a>
+            </div>
+            <div class="flex items-center ml-1 whitespace-nowrap">
+                <mat-icon class="icon-size-5 text-secondary" svgIcon="heroicons_solid:chevron-right"></mat-icon>
+                <a class="ml-1 text-primary-500">{{ item?.id ?? 'Nuovo' }}</a>
+            </div>
+        </div>
+        <!-- Title -->
+        <div class="mt-2">
+            <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate">
+                {{ item?.title ?? 'Nuovo' }}
+            </h2>
+        </div>
+    </div>
+</div>
+
+<!-- Progressbar -->
+<mat-progress-bar mode="indeterminate" *ngIf="isLoading"></mat-progress-bar>
+
+<!-- Main -->
+<div class="flex-auto grow" [ngClass]="child ? 'py-4 px-0 sm:py-2 sm:px-0' : 'p-6 sm:p-10'" *ngIf="form">
+    <form [formGroup]="form" class="flex flex-col p-8 pb-0 bg-card rounded-2xl shadow overflow-hidden">
+        <div class="grid sm:grid-cols-4 gap-2 mb-3">
+            <mat-form-field class="fuse-mat-dense">
+                <mat-label>Icona</mat-label>
+                <input matInput formControlName="icon" />
+                <mat-error>Campo obbligatorio!</mat-error>
+            </mat-form-field>
+            
+            <mat-form-field class="fuse-mat-dense">
+                <mat-label>Titolo</mat-label>
+                <input matInput formControlName="title" required />
+                <mat-error>Campo obbligatorio!</mat-error>
+            </mat-form-field>
+            
+            <mat-form-field class="fuse-mat-dense">
+                <mat-label>Sottotitolo</mat-label>
+                <input matInput formControlName="subtitle" />
+            </mat-form-field>
+            
+            <mat-form-field class="fuse-mat-dense">
+                <mat-label>Tooltip</mat-label>
+                <input matInput formControlName="tooltip" />
+            </mat-form-field>
+        </div>
+        
+        <div class="grid sm:grid-cols-4 gap-2 mb-3">
+            <mat-form-field class="fuse-mat-dense">
+                <mat-label>Link</mat-label>
+                <input matInput formControlName="link" />
+            </mat-form-field>
+            
+            <div class="fuse-mat-dense mb-5">
+                <mat-label>Target</mat-label>
+                <form-select
+                    [items]="selectTarget?.items"
+                    [formGroup]="form"
+                    formName="target"
+                    bindLabel="nome"
+                    bindValue="id"
+                    appearance="outline"
+                />
+                <mat-error class="text-sm" *ngIf="form.controls['target'].invalid && form?.controls['target'].touched">
+                    <validation-errors [form]="form.controls['target']"></validation-errors>
+                </mat-error>
+            </div>
+            
+            <mat-form-field class="fuse-mat-dense">
+                <mat-label>Permesso</mat-label>
+                <input matInput formControlName="permission" />
+            </mat-form-field>
+            
+            <mat-form-field class="fuse-mat-dense">
+                <mat-label>Ordine</mat-label>
+                <input matInput formControlName="order" type="number" step="1"/>
+            </mat-form-field>
+        </div>
+
+        <div class="grid sm:grid-cols-4 gap-2 mb-3">
+            <div class="fuse-mat-dense">
+                <mat-label>Padre</mat-label>
+                <form-select
+                    [formGroup]="form"
+                    formName="parent_id"
+                    [preload]="true"
+                    [searchFn]="this._programmiService.list({ paginate: false })"
+                    (search)="selectFormSearch(this._programmiService.list({ paginate: false, title: $event }))"
+                    bindLabel="title"
+                    bindValue="id"
+                    appearance="outline"
+                />
+                <mat-error class="text-sm" *ngIf="form.controls['parent_id'].invalid && form?.controls['parent_id'].touched">
+                    <validation-errors [form]="form.controls['parent_id']"></validation-errors>
+                </mat-error>
+            </div>
+            
+            <div class="fuse-mat-dense">
+                <mat-label>Attivo*</mat-label>
+                <form-select
+                    [items]="selectAttivo?.items"
+                    [formGroup]="form"
+                    formName="active"
+                    bindLabel="nome"
+                    bindValue="id"
+                    appearance="outline"
+                />
+                <mat-error class="text-sm" *ngIf="form.controls['active'].invalid && form?.controls['active'].touched">
+                    <validation-errors [form]="form.controls['active']"></validation-errors>
+                </mat-error>
+            </div>
+            
+            <div class="fuse-mat-dense">
+                <mat-label>Corrispondenza Esatta</mat-label>
+                <form-select
+                    [items]="selectAttivo?.items"
+                    [formGroup]="form"
+                    formName="exactMatch"
+                    bindLabel="nome"
+                    bindValue="id"
+                    appearance="outline"
+                />
+                <mat-error class="text-sm" *ngIf="form.controls['exactMatch'].invalid && form?.controls['exactMatch'].touched">
+                    <validation-errors [form]="form.controls['exactMatch']"></validation-errors>
+                </mat-error>
+            </div>
+            
+            <div class="fuse-mat-dense">
+                <mat-label>Link esterno</mat-label>
+                <form-select
+                    [items]="selectAttivo?.items"
+                    [formGroup]="form"
+                    formName="externalLink"
+                    bindLabel="nome"
+                    bindValue="id"
+                    appearance="outline"
+                />
+                <mat-error class="text-sm" *ngIf="form.controls['externalLink'].invalid && form?.controls['externalLink'].touched">
+                    <validation-errors [form]="form.controls['externalLink']"></validation-errors>
+                </mat-error>
+            </div>
+        </div>
+
+        <mat-divider role="separator" class="mat-divider mb-6 mb-3 mat-divider-horizontal" aria-orientation="horizontal"></mat-divider>
+
+        <div class="flex flex-col gt-xs:flex-row gt-xs:items-start">
+            <div class="gt-xs:max-w-80 gt-xs:pr-12">
+                <p class="text-lg font-medium">Tipo Programma</p>
+                <p class="text-secondary mb-6">Tipo del programma da mostrare in base al template</p>
+            </div>
+            <div class="flex-auto min-w-64">
+                <div class="md:grid md:grid-cols-3">
+                    <mat-label class="mt-1">Default</mat-label>
+                    <div class="fuse-mat-dense">
+                        <form-select
+                            [items]="selectTipi?.items"
+                            [formGroup]="nestForm"
+                            formName="default"
+                            bindLabel="nome"
+                            bindValue="id"
+                            appearance="outline"
+                        />
+                    </div>
+                </div>
+                <div class="md:grid md:grid-cols-3">
+                    <mat-label class="mt-1">Compact</mat-label>
+                    <div class="fuse-mat-dense">
+                        <form-select
+                            [items]="selectTipi?.items"
+                            [formGroup]="nestForm"
+                            formName="compact"
+                            bindLabel="nome"
+                            bindValue="id"
+                            appearance="outline"
+                        />
+                    </div>
+                </div>
+                <div class="md:grid md:grid-cols-3">
+                    <mat-label class="mt-1">Horizonal</mat-label>
+                    <div class="fuse-mat-dense">
+                        <form-select
+                            [items]="selectTipi?.items"
+                            [formGroup]="nestForm"
+                            formName="horizontal"
+                            bindLabel="nome"
+                            bindValue="id"
+                            appearance="outline"
+                        />
+                    </div>
+                </div>
+                <div class="md:grid md:grid-cols-3">
+                    <mat-label class="mt-1">Futuristic</mat-label>
+                    <div class="fuse-mat-dense">
+                        <form-select
+                            [items]="selectTipi?.items"
+                            [formGroup]="nestForm"
+                            formName="futuristic"
+                            bindLabel="nome"
+                            bindValue="id"
+                            appearance="outline"
+                        />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <mat-divider role="separator" class="mat-divider mt-6 mb-3 mat-divider-horizontal" aria-orientation="horizontal"></mat-divider>
+
+        <div class="flex flex-col gt-xs:flex-row gt-xs:items-start">
+            <div class="flex flex-auto gt-xs:max-w-80 gt-xs:pr-12">
+                <div class="flex flex-col">
+                    <p class="text-lg font-medium">Query Params</p>
+                    <p class="text-secondary mb-6">Parametri da aggiungere al link</p>
+                </div>
+                
+                <div class="ml-auto mt-2 flex-shrink-0">
+                    <button class="px-3 sm:mr-2 my-1 w-full sm:w-50" mat-flat-button type="button" (click)="addParam()" color="primary"><i class="fa-thin fa-plus mr-2"></i>Aggiungi parametro</button>
+                </div>
+            </div>
+            <div class="flex-auto min-w-64">
+                <ng-container formArrayName="queryParams">
+                    <ng-container *ngFor="let queryParam of queryParams.controls; let i = index">
+                        <div class="grid md:grid-cols-4 gap-2 my-1" [formGroupName]="i">
+                            <mat-form-field class="fuse-mat-dense">
+                                <input matInput formControlName="key" placeholder="Chiave" />
+                                <mat-error>Campo obbligatorio!</mat-error>
+                            </mat-form-field>
+        
+                            <mat-form-field class="fuse-mat-dense">
+                                <input matInput formControlName="value" placeholder="Valore"/>
+                                <mat-error>Campo obbligatorio!</mat-error>
+                            </mat-form-field>
+
+                            <button class="" mat-mini-fab type="button" (click)="removeParam(i)" color="warn"><i class="fa-thin fa-trash"></i></button>
+                        </div>
+                    </ng-container>
+                </ng-container>
+            </div>
+        </div>
+
+        <mat-divider role="separator" class="mat-divider mb-6 mb-3 mat-divider-horizontal" aria-orientation="horizontal"></mat-divider>
+
+        <div class="flex flex-col gt-xs:flex-row gt-xs:items-start">
+            <div class="gt-xs:max-w-80 gt-xs:pr-12">
+                <p class="text-lg font-medium">Classi</p>
+                <p class="text-secondary mb-6">Classi da applicare ai vari elementi del componente</p>
+            </div>
+            <div class="flex-auto min-w-64">
+                <div formGroupName="classes">
+                    <div class="md:grid md:grid-cols-3">
+                        <mat-label class="mt-1">Title</mat-label>
+                        <mat-form-field class="fuse-mat-dense sm:col-span-2">
+                            <input matInput formControlName="title" class="" />
+                        </mat-form-field>
+                    </div>
+                    <div class="md:grid md:grid-cols-3">
+                        <mat-label class="mt-1">Subtitle</mat-label>
+                        <mat-form-field class="fuse-mat-dense sm:col-span-2">
+                            <input matInput formControlName="subtitle" class="" />
+                        </mat-form-field>
+                    </div>
+                    <div class="md:grid md:grid-cols-3">
+                        <mat-label class="mt-1">Icon</mat-label>
+                        <mat-form-field class="fuse-mat-dense sm:col-span-2">
+                            <input matInput formControlName="icon" class="" />
+                        </mat-form-field>
+                    </div>
+                    <div class="md:grid md:grid-cols-3">
+                        <mat-label class="mt-1">Wrapper</mat-label>
+                        <mat-form-field class="fuse-mat-dense sm:col-span-2">
+                            <input matInput formControlName="wrapper" class="" />
+                        </mat-form-field>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <mat-divider role="separator" class="mat-divider mb-6 mb-3 mat-divider-horizontal" aria-orientation="horizontal"></mat-divider>
+
+        <div class="flex flex-col gt-xs:flex-row gt-xs:items-start">
+            <div class="gt-xs:max-w-80 gt-xs:pr-12">
+                <p class="text-lg font-medium">Badge</p>
+                <p class="text-secondary mb-6">Badge d'aggiungere al bottone</p>
+            </div>
+            <div class="flex-auto min-w-64">
+                <div formGroupName="badge">
+                    <div class="md:grid md:grid-cols-3">
+                        <mat-label class="mt-1">Title</mat-label>
+                        <mat-form-field class="fuse-mat-dense sm:col-span-2">
+                            <input matInput formControlName="title" class="" />
+                        </mat-form-field>
+                    </div>
+                    <div class="md:grid md:grid-cols-3">
+                        <mat-label class="mt-1">Classes</mat-label>
+                        <mat-form-field class="fuse-mat-dense sm:col-span-2">
+                            <input matInput formControlName="classes" class="" />
+                        </mat-form-field>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Bar -->
+        <form-navigation (goBack)="goToBack()" (submit)="submit()" (salvacontinua)="submit(true)" [isChild]="child"></form-navigation>
+    </form>
+</div>
+</div>

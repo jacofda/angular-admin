@@ -1,0 +1,62 @@
+<!-- ----------------------------------------------------------------------------------------------------- -->
+<!-- Empty layout -->
+<!-- ----------------------------------------------------------------------------------------------------- -->
+<empty-layout *ngIf="layout === 'empty'"></empty-layout>
+
+<!-- ----------------------------------------------------------------------------------------------------- -->
+<!-- Layouts with horizontal navigation -->
+<!-- ----------------------------------------------------------------------------------------------------- -->
+
+<!-- Centered -->
+<centered-layout *ngIf="layout === 'centered'"></centered-layout>
+
+<!-- Enterprise -->
+<enterprise-layout *ngIf="layout === 'enterprise'"></enterprise-layout>
+
+<!-- Material -->
+<material-layout *ngIf="layout === 'material'"></material-layout>
+
+<!-- Modern -->
+<modern-layout *ngIf="layout === 'modern'"></modern-layout>
+
+<!-- ----------------------------------------------------------------------------------------------------- -->
+<!-- Layouts with vertical navigation -->
+<!-- ----------------------------------------------------------------------------------------------------- -->
+
+<!-- Classic -->
+<classic-layout *ngIf="layout === 'classic'"></classic-layout>
+
+<!-- Classy -->
+<classy-layout *ngIf="layout === 'classy'"></classy-layout>
+
+<!-- Compact -->
+<compact-layout *ngIf="layout === 'compact'"></compact-layout>
+
+<!-- Dense -->
+<dense-layout *ngIf="layout === 'dense'"></dense-layout>
+
+<!-- Futuristic -->
+<futuristic-layout *ngIf="layout === 'futuristic'"></futuristic-layout>
+
+<!-- Thin -->
+<thin-layout *ngIf="layout === 'thin'"></thin-layout>
+
+<!-- ----------------------------------------------------------------------------------------------------- -->
+<!-- Settings drawer - Remove this to remove the drawer and its button -->
+<!-- ----------------------------------------------------------------------------------------------------- -->
+<settings></settings>
+
+<!-- ----------------------------------------------------------------------------------------------------- -->
+<!-- Stampiamo le modali, pronte per essere usate -->
+<!-- ----------------------------------------------------------------------------------------------------- -->
+<!-- <div class="absolute"> -->
+
+<div class="flex-none w-0 h-0">
+    <div *ngFor="let modal of modals$ | async; let i = index">
+        <mow-modal style="display: block" attr.id="{{ modal?.id }}" [notitle]="modal?.notitle" [title]="modal?.title" [scheme]="scheme" [size]="modal.size">
+            <div *ngIf="modal?.dynamicComponent">
+                <ng-template [ngComponentOutlet]="modal?.dynamicComponent" [ndcDynamicInputs]="modal?.bind"></ng-template>
+            </div>
+        </mow-modal>
+    </div>
+</div>

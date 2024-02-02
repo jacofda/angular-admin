@@ -1,0 +1,23 @@
+.angular-editor-textarea {
+    margin-top: 0 !important;
+    border-top: 0 !important;
+    padding-top: 1rem !important;
+    border-bottom-right-radius: 8px;
+    border-bottom-left-radius: 8px;
+}
+.angular-editor-textarea:after {
+    bottom: 8px !important;
+    right: 8px !important;
+}
+mat-label {
+    -webkit-font-smoothing: auto !important;
+    -moz-osx-font-smoothing: auto !important;
+    font-weight: 500 !important;
+}
+
+.tox-menubar {
+    gap: 10px !important;
+}
+.tox-menubar button {
+    padding: 6px;
+}

@@ -1,0 +1,75 @@
+<div class="flex flex-col flex-auto min-w-0">
+    <!-- Header -->
+    <div
+        *ngIf="!child"
+        class="flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between p-6 sm:py-8 sm:px-10 border-b bg-card dark:bg-transparent">
+        <div class="flex-1 min-w-0">
+            <!-- Breadcrumbs -->
+            <div class="flex flex-wrap items-center font-medium">
+                <div>
+                    <a routerLink="/clients" class="whitespace-nowrap text-primary-500">Client</a>
+                </div>
+                <div class="flex items-center ml-1 whitespace-nowrap">
+                    <mat-icon class="icon-size-5 text-secondary" svgIcon="heroicons_solid:chevron-right"></mat-icon>
+                    <a class="ml-1 text-primary-500">{{ item?.titolo ?? 'Nuovo' }}</a>
+                </div>
+            </div>
+            <!-- Title -->
+            <div class="mt-2">
+                <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate">
+                    {{ item?.titolo ?? 'Nuovo' }}
+                </h2>
+            </div>
+        </div>
+    </div>
+
+    <!-- Progressbar -->
+    <mat-progress-bar mode="indeterminate" *ngIf="isLoading"></mat-progress-bar>
+
+    <!-- Main -->
+    <div class="flex-auto" [ngClass]="child ? 'py-4 px-0 sm:py-2 sm:px-0' : 'p-6 sm:p-10'" *ngIf="form">
+        <form [formGroup]="form" class="flex flex-col p-8 pb-0 bg-card rounded-2xl shadow overflow-hidden">
+            <mat-form-field class="fuse-mat-dense flex-auto mb-3" subscriptSizing="dynamic">
+                <mat-label>Nome cliente</mat-label>
+                <input matInput formControlName="titolo" #titolo />
+                <mat-error *ngIf="form.controls['titolo'].invalid">
+                    <validation-errors [form]="form.controls['titolo']"></validation-errors>
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="fuse-mat-dense flex-auto mb-3" subscriptSizing="dynamic">
+                <mat-label>Website</mat-label>
+                <input matInput formControlName="website" #website />
+                <mat-error *ngIf="form.controls['website'].invalid">
+                    <validation-errors [form]="form.controls['website']"></validation-errors>
+                </mat-error>
+            </mat-form-field>
+
+            <div class="fuse-mat-dense basis-1/2 mr-1 mb-2">
+                <mat-label>Visibile in slide*</mat-label>
+                <form-select
+                    [items]="selectIsInSlide?.items"
+                    [formGroup]="form"
+                    formName="isInSlide"
+                    bindLabel="nome"
+                    bindValue="id"
+                    appearance="outline"></form-select>
+                <mat-error class="text-sm" *ngIf="form.controls['isInSlide'].invalid && form?.controls['isInSlide'].touched">
+                    <validation-errors [form]="form.controls['isInSlide']"></validation-errors>
+                </mat-error>
+            </div>
+
+            <single-upload
+                class="mt-5 mb-2 w-full sm:w-1/4 md:w-1/5 lg:w-1/6"
+                label="logo"
+                [file]="form.value.mainImage"
+                (selected)="setSelectedMainImage($event)"></single-upload>
+            <mat-error class="text-sm" *ngIf="form.controls['mainImage'].invalid && form?.controls['mainImage'].touched">
+                <validation-errors [form]="form.controls['mainImage']"></validation-errors>
+            </mat-error>
+
+            <!-- Navigation Bar -->
+            <form-navigation (goBack)="goToBack()" (submit)="submit()" (salvacontinua)="submit(true)" [isChild]="child"></form-navigation>
+        </form>
+    </div>
+</div>

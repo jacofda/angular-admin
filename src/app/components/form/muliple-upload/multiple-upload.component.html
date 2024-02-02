@@ -1,0 +1,66 @@
+<div class="flex-auto">
+    <div class="flex-auto bg-slate-100 rounded-3xl">
+        <!-- <mat-label class="mt-5">{{ label }}</mat-label> -->
+        <!-- <br /> -->
+    
+        <div class="flex flex-row items-center justify-between">
+            <div>
+                <span class="pl-4">
+                    <b>{{ label }}</b>
+                </span>
+            </div>
+            <div>
+                <button mat-flat-button type="button" color="primary" (click)="openFileManager()">
+                    <mat-icon svgIcon="heroicons_outline:plus"></mat-icon>
+                    <span class="mx-1">Seleziona</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="selectedFiles.length > 0" cdkDropList cdkDropListOrientation="horizontal" class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7 xl:grid-cols-7 pt-5 example-list" (cdkDropListDropped)="drop($event)">
+        <!-- Costruisco un foreach di card contenente le immagini-->
+        <div class="example-box" *ngFor="let file of selectedFiles" cdkDrag>
+            <a
+                [ngClass]="{ 'opacity-50': file.deleted }"
+                class="flex flex-col m-2 shadow rounded-2xl cursor-pointer bg-card"
+                >
+                <div>
+                    <div class="relative">
+                        <a class="absolute z-20 top-1.5 left-1.5 w-8 h-8 min-h-8" (click)="removeImage(file)" mat-icon-button>
+                            <i class="fa-solid fa-trash fa-2xs" [ngClass]="documenti ? 'text-black' : 'text-white'"></i>
+                        </a>
+                    </div>
+                    <div *ngIf="documenti" class="flex justify-items-center justify-center w-full p-5">
+                        <a class="relative" target="_blank" [href]="generateFilePath(file, 1024)" >
+                            <mat-icon
+                                class="icon-size-14 text-hint opacity-50 w-full"
+                                [svgIcon]="'heroicons_solid:document'"></mat-icon>
+                            <div
+                                class="absolute items-center left-0 bottom-0 px-1.5 rounded text-sm font-semibold leading-5 text-white"
+                                [class.bg-red-600]="getExtension(file) === 'PDF'"
+                                [class.bg-blue-600]="getExtension(file) === 'DOC'"
+                                [class.bg-green-600]="getExtension(file) === 'XLS'"
+                                [class.bg-gray-600]="getExtension(file) === 'TXT'"
+                                [class.bg-amber-600]="getExtension(file) === 'JPG'">
+                                {{ getExtension(file).toUpperCase() }}
+                            </div>
+                        </a>
+                    </div>
+                    <img
+                        *ngIf="!documenti"
+                        [src]="getFilePath(file)"
+                        alt=""
+                        class="w-full object-cover h-30 rounded-t-2xl" />
+                </div>
+                <div class="flex flex-col flex-auto justify-center text-center text-sm font-medium px-2">
+                    <mat-form-field class="w-full fuse-mat-dense basis-1/2 mt-2 title-input-img">
+                        <mat-label>Titolo</mat-label>
+                        <input matInput [(ngModel)]="file.name" />
+                        <mat-error>Campo obbligatorio!</mat-error>
+                    </mat-form-field>
+                </div>
+            </a>
+        </div>
+    </div>
+
+</div>

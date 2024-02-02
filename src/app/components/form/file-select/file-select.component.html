@@ -1,0 +1,164 @@
+<!-- Main -->
+<div class="flex flex-col flex-auto w-full py-15" *ngIf="isLoading">
+    <div class="flex my-auto justify-center flex-wrap w-full max-w-screen-xl mx-auto p-6 md:p-8">
+        <mat-spinner [diameter]="70"></mat-spinner>
+    </div>
+</div>
+<div class="flex flex-col flex-auto" *ngIf="items && !isLoading">
+    <!-- Header -->
+    <div
+        class="flex flex-col sm:flex-row items-start sm:items-center sm:justify-between p-6 sm:py-12 md:px-8 border-b bg-card dark:bg-transparent">
+        <!-- Title -->
+        <div>
+            <div class="text-4xl font-extrabold tracking-tight leading-none">File Manager</div>
+            <div class="flex items-center mt-0.5 font-medium text-secondary">
+                <ng-container *ngIf="!items.path.length">{{ items.folders.length }} cartelle, {{ items.files.length }} file</ng-container>
+            </div>
+        </div>
+        <!-- Actions -->
+        <div class="mt-4 sm:mt-0 flex">
+            <div>
+                <div class="flex rounded-md rounded-l-3xl shadow-sm mr-2">
+                    <input
+                        type="search"
+                        placeholder="cerca..."
+                        [(ngModel)]="queryString"
+                        (change)="updateQueryString()"
+                        name="hs-trailing-button-add-on-with-icon"
+                        class="pt-3 pb-2 px-4 block w-full border-gray-200 shadow-sm rounded-l-3xl text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400" />
+                    <button mat-flat-button color="primary" type="button">
+                        <i class="fal fa-search"></i>
+                    </button>
+                </div>
+            </div>
+
+            <button mat-flat-button *ngIf="someSelected()" class="mr-3" [color]="'accent'" type="button" (click)="selectSelected()">
+                <i class="fa-light fa-check-double"></i>
+                <span class="ml-2 mr-1">Conferma Selezionati</span>
+            </button>
+            <!-- Upload button -->
+            <button mat-flat-button [color]="'primary'" type="button" (click)="upload()">
+                <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
+                <span class="ml-2 mr-1">Carica file</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="pl-4 md:pl-8 pt-4 md:pt-8 flex items-center mt-0.5 font-medium text-secondary" *ngIf="parentFolder">
+        <ng-container>
+            <button mat-flat-button [color]="'primary'" type="button" (click)="loadData(parentFolder)">
+                <i class="fa-thin fa-arrow-left"></i>
+                Indietro
+            </button>
+        </ng-container>
+    </div>
+
+    <!-- Items list -->
+    <ng-container *ngIf="!isLoading || (items && (items.folders.length > 0 || items.files.length > 0))">
+        <div class="p-6 md:p-8 space-y-8">
+            <!-- Folders -->
+            <ng-container *ngIf="items.folders.length > 0">
+                <div>
+                    <div class="font-medium">Folders</div>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 m-2 mt-2">
+                        <ng-container *ngFor="let folder of items.folders">
+                            <div class="relative h-30 m-2 p-4 shadow rounded-2xl bg-card">
+                                <a
+                                    class="z-10 absolute inset-0 flex flex-col p-4 cursor-pointer"
+                                    (click)="$event.stopPropagation()"
+                                    (click)="loadData(folder['Prefix'])">
+                                    <div class="aspect-[9/6]">
+                                        <div class="flex items-center justify-center h-full">
+                                            <mat-icon class="icon-size-14 text-hint opacity-50" svgIcon="heroicons_solid:folder"></mat-icon>
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col flex-auto justify-center text-center text-sm font-medium">
+                                        <div class="truncate">
+                                            {{ getFolderName(folder['Prefix']) }}
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        </ng-container>
+                    </div>
+                </div>
+            </ng-container>
+
+            <!-- Files -->
+            <ng-container *ngIf="items.files.length > 0">
+                <div>
+                    <div class="font-medium">Files</div>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 m-2 mt-2">
+                        <ng-container *ngFor="let file of items.files">
+                            <a class="flex flex-col h-40 m-2 shadow rounded-2xl cursor-pointer bg-card" (click)="selected(file)">
+                                <div>
+                                    <div class="relative">
+                                        <a
+                                            *ngIf="multiple"
+                                            class="absolute z-20 right-1.5 w-8 h-8 min-h-8"
+                                            style="top: 5px"
+                                            (click)="$event.stopPropagation()"
+                                            mat-icon-button>
+                                            <input
+                                                type="checkbox"
+                                                [value]="file.selected"
+                                                class="absolute z-20 cursor-pointer"
+                                                (change)="selectedSingle($event, file)"
+                                                class="example-margin" />
+                                        </a>
+                                        <a
+                                            class="absolute z-20 top-1.5 left-1.5 w-8 h-8 min-h-8"
+                                            (click)="delete($event, file)"
+                                            mat-icon-button>
+                                            <i class="fa-solid text-white fa-trash fa-2xs"></i>
+                                        </a>
+                                    </div>
+                                    <div class="flex flex-col flex-auto w-full py-3" *ngIf="file.loading">
+                                        <div class="flex my-auto justify-center flex-wrap w-full max-w-screen-xl mx-auto p-6 md:p-8">
+                                            <mat-spinner [diameter]="30"></mat-spinner>
+                                        </div>
+                                    </div>
+                                    <img
+                                        *ngIf="isImage(file) && !file.loading"
+                                        [src]="getFilePath(file)"
+                                        alt=""
+                                        class="w-full object-cover h-30 rounded-t-2xl" />
+
+                                    <div
+                                        class="flex items-center justify-center h-full pt-4"
+                                        *ngIf="!isImage(file) && !file.loading"
+                                        (click)="$event.preventDefault()">
+                                        <div class="relative">
+                                            <mat-icon
+                                                class="icon-size-14 text-hint opacity-50"
+                                                [svgIcon]="'heroicons_solid:document'"></mat-icon>
+                                            <div
+                                                class="absolute left-0 bottom-0 px-1.5 rounded text-sm font-semibold leading-5 text-white"
+                                                [class.bg-red-600]="file.type === 'PDF'"
+                                                [class.bg-blue-600]="file.type === 'DOC'"
+                                                [class.bg-green-600]="file.type === 'XLS'"
+                                                [class.bg-gray-600]="file.type === 'TXT'"
+                                                [class.bg-amber-600]="file.type === 'JPG'"
+                                                [class.bg-sky-600]="file.type === 'PNG'"
+                                                [class.bg-teal-600]="file.type === 'WEBP'">
+                                                {{ file.type.toUpperCase() }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col flex-auto justify-center text-center text-sm font-medium">
+                                    <div class="truncate px-2" [matTooltip]="file.name">{{ file.name }}</div>
+                                </div>
+                            </a>
+                        </ng-container>
+                    </div>
+                </div>
+            </ng-container>
+        </div>
+        <!-- No items template -->
+        <div *ngIf="!items.files.length" class="flex flex-auto flex-col items-center justify-center dark:bg-transparent">
+            <mat-icon class="icon-size-24" [svgIcon]="'heroicons_outline:folder-open'"></mat-icon>
+            <div class="mb-14 text-2xl font-semibold tracking-tight text-secondary">Nessun file presente!</div>
+        </div>
+    </ng-container>
+</div>

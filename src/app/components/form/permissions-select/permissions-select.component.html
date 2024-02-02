@@ -1,0 +1,53 @@
+<div *ngIf="allPermissions">
+    <div class="bg-gray-50 dark:bg-gray-700 p-8 border-b">
+        <p class="text-lg font-medium">Permessi</p>
+        <p class="text-secondary">Selezionare i permessi da impostare</p>
+    </div>
+
+    <div class="flex flex-col p-8">
+        <div class="flex flex-col mb-3">
+            <div class="flex flex-row items-baseline">
+                <mat-form-field class="fuse-mat-dense flex-auto mb-3" subscriptSizing="dynamic">
+                    <mat-label>Cerca permesso...</mat-label>
+                    <input matInput [(ngModel)]="search"/>
+                </mat-form-field>
+
+                <div class="flex-auto"></div>
+
+                <button mat-flat-button class="mr-3" color="accent" type="button" (click)="selectAll(); permissionsChange.emit(allPermissions.selected)">
+                    <i class="fa-light fa-check-double"></i>
+                    <span class="ml-2 mr-1">Seleziona tutto</span>
+                </button>
+
+                <button mat-flat-button class="mr-3" color="warn" type="button" (click)="deselectAll(); permissionsChange.emit(allPermissions.selected)">
+                    <i class="fa-light fa-circle-xmark"></i>
+                    <span class="ml-2 mr-1">Deseleziona tutto</span>
+                </button>
+            </div>
+        </div>
+
+
+        <section
+            class="example-section grid grid-cols-6 gap-x-4 gap-y-0"
+            *ngFor="let group of groups;"
+        >
+            <mat-checkbox
+                class="example-margin col-span-2"
+                [checked]="allPermissions.rows[group].allSelected()"
+                [indeterminate]="allPermissions.rows[group].someSelected()"
+                (change)="allPermissions.rows[group].selectAll($event.checked); permissionsChange.emit(allPermissions.selected)"
+            >
+                {{ allPermissions.rows[group].pretty }}
+            </mat-checkbox>
+
+            <div *ngFor="let select of allPermissions.rows[group].selects">
+                <mat-checkbox
+                    [(ngModel)]="select.selected"
+                    (change)="permissionsChange.emit(allPermissions.selected)"
+                >
+                    {{ select.pretty }}
+                </mat-checkbox>
+            </div>
+        </section>
+    </div>
+</div>

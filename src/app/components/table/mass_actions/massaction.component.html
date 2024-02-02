@@ -1,0 +1,25 @@
+<div class="flex items-center">
+    <div class="hidden sm:inline">
+        <button
+            mat-button
+            [matMenuTriggerFor]="menu"
+            class="min-w-10 min-h-7 h-7 bg-gray-100 p-5 text-black"
+            [disabled]="!currentMassActions.length"
+        >
+            <i class="fa-solid fa-square-arrow-down mr-2"></i> Seleziona un'azione...
+        </button>
+        <mat-menu #menu="matMenu">
+            <ng-container *ngFor="let option of currentMassActions" >
+                <button 
+                    mat-menu-item
+                    (click)="click(option)"
+                >
+                <i *ngIf="option.icon" class="mr-2" [ngClass]="option.icon"></i>{{ option.label }}
+                </button>
+            </ng-container>
+        </mat-menu>
+    </div>
+    <div class="ml-4 justify-start sm:justify-end">
+        <b>{{ totalRecords }}</b> record totali / <b>{{ selected.length }}</b> selezionati
+    </div>
+</div>

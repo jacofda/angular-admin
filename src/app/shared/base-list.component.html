@@ -1,0 +1,185 @@
+<div class="sm:absolute sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card dark:bg-transparent">
+    <!-- Header -->
+    <div class="relative flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between py-8 px-6 md:px-8 border-b">
+        <!-- Title -->
+        <div class="text-4xl font-extrabold tracking-tight">{{ titolo }}</div>
+    </div>
+
+    <mow-alert appearance="soft" [dismissible]="true" [dismissed]="true" name="deletedContent" type="success" [timeout]="2">
+        Contenuto Eliminato
+    </mow-alert>
+
+    <!-- Riassunto dei filtri -->
+    <summary-filter-table [filters]="filters" [searchInputs]="queryObject" (removeFilter)="removeFilter($event)"></summary-filter-table>
+
+    <!-- Filtri -->
+    <filters-table
+        *ngIf="filters && filters.length"
+        class="flex justify-between items-center p-0 md:p-3 my-5 sm:my-0 flex-col md:flex-row"
+        [filters]="filters"
+        [scenari]="scenari"
+        [searchInputs]="queryObject"
+        (scenarioSave)="saveScenario($event)"
+        (scenarioLoad)="loadScenario($event)"
+        (scenarioDelete)="deleteScenario($event)"
+        (search)="filterTable()"
+        (reset)="resetFilters()"
+        (resetTabella)="resetTabella(tableKey)"></filters-table>
+
+    <!-- Barra Delle Azioni -->
+    <div class="relative flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between pb-4 px-3 border-b">
+        <!-- Mass Actions -->
+        <mass-actions-table
+            [massActions]="massActions"
+            [selected]="selected"
+            [totalRecords]="pagination.totalItems"
+            (rowMassActionClick)="rowMassActionClick($event)"></mass-actions-table>
+
+        <!-- Actions -->
+        <div class="flex shrink-0 items-center mt-6 sm:mt-0 sm:ml-4">
+            <ng-container *ngFor="let button of mainAction; trackBy: trackByFn">
+                <button [routerLink]="button.name" class="ml-2 p-5" mat-flat-button [color]="'primary'">
+                    <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
+                    <span class="ml-2 mr-1">{{ button.label }}</span>
+                </button>
+            </ng-container>
+            <button
+                [matMenuTriggerFor]="menu"
+                mat-flat-button
+                #menuTrigger="matMenuTrigger"
+                class="min-w-10 min-h-7 h-7 bg-slate-300 ml-1 p-5">
+                <span class="text-md">
+                    Righe per pagina:
+                    <b>{{ this.pagination.limit }}</b>
+                </span>
+            </button>
+            <mat-menu #menu="matMenu">
+                <button mat-menu-item (click)="setPaginatorSize(5)">
+                    <b>5</b>
+                    &nbsp;per pagina
+                </button>
+                <button mat-menu-item (click)="setPaginatorSize(10)">
+                    <b>10</b>
+                    &nbsp;per pagina
+                </button>
+                <button mat-menu-item (click)="setPaginatorSize(25)">
+                    <b>25</b>
+                    &nbsp;per pagina
+                </button>
+                <button mat-menu-item (click)="setPaginatorSize(50)">
+                    <b>50</b>
+                    &nbsp;per pagina
+                </button>
+                <button mat-menu-item (click)="setPaginatorSize(100)">
+                    <b>100</b>
+                    &nbsp;per pagina
+                </button>
+            </mat-menu>
+        </div>
+    </div>
+
+    <!-- Progressbar -->
+    <mat-progress-bar mode="indeterminate" *ngIf="isLoadingResults"></mat-progress-bar>
+
+    <!-- Main -->
+    <div class="flex flex-auto overflow-hidden">
+        <!-- Examples list -->
+        <div class="flex flex-col flex-auto sm:overflow-y-auto">
+            <div class="bg-card rounded-2xl">
+                <div class="example-table-container">
+                    <ngx-datatable
+                        #table
+                        [messages]="_table_messages"
+                        [headerHeight]="50"
+                        [footerHeight]="50"
+                        rowHeight="auto"
+                        class="material striped"
+                        [ngClass]="{ 'table-dark': this.scheme === 'dark' }"
+                        [rows]="dataSource"
+                        [columns]="columns"
+                        [externalPaging]="true"
+                        [count]="pagination.totalItems"
+                        [offset]="pagination.currentPage - 1"
+                        [limit]="pagination.limit"
+                        [scrollbarH]="true"
+                        trackByProp="id"
+                        columnMode="force"
+                        [selectionType]="selection"
+                        [selected]="selected"
+                        (page)="pageData($event)"
+                        (sort)="sortData($event)"
+                        (activate)="_rowDataComponent ? toggleExpandRow($event) : null" 
+                        (select)="onSelect($event)">
+
+
+                        <!-- Row Detail Template -->
+                        <ngx-datatable-row-detail [rowHeight]="250" #myDetailRow (toggle)="onDetailToggle($event)">
+                            <ng-template let-row="row" let-expanded="expanded" ngx-datatable-row-detail-template>
+                                <ng-template *ngIf="_currentDetailRow" [ngComponentOutlet]="_rowDataComponent" [ndcDynamicInputs]="{ rowData: _currentDetailRow }"></ng-template>
+                            </ng-template>
+                        </ngx-datatable-row-detail>
+
+                        <ng-container *ngFor="let column of columns; trackBy: trackByFn">
+                            <ngx-datatable-column
+                                *ngIf="isAzioni(column)"
+                                name=""
+                                [sortable]="false"
+                                [canAutoResize]="false"
+                                [width]="160"
+                                [resizeable]="false">
+                                <ng-template let-row="row" ngx-datatable-cell-template>
+                                    <actions-table
+                                        *ngIf="rowAction.length"
+                                        [row]="row"
+                                        [rowActions]="rowAction"
+                                        [rowDropDownActions]="rowDropDownction"
+                                        (rowActionClick)="rowActionClick($event.row, $event.action)"
+                                        (rowDropdownActionClick)="dropDownActionClick($event)"></actions-table>
+                                </ng-template>
+                            </ngx-datatable-column>
+                            <ngx-datatable-column
+                                [cellClass]="_rowDataComponent ? 'cursor-pointer' : ''"
+                                *ngIf="!isAzioni(column) && !isCheckbox(column)"
+                                [prop]="column.sortField"
+                                [name]="column.label"
+                                [width]="column.width"
+                                [canAutoResize]="getAutoresize(column)">
+                                <ng-template let-row="row" ngx-datatable-cell-template>
+                                    <div [innerHTML]="getValues(row, column.key)"></div>
+                                </ng-template>
+                            </ngx-datatable-column>
+                            
+                            <ngx-datatable-column
+                                *ngIf="isCheckbox(column)"
+                                [headerCheckboxable]="true"
+                                headerClass="text-center"
+                                cellClass="text-center"
+                                [width]="column.width"
+                                [canAutoResize]="getAutoresize(column)"
+                                [resizeable]="isResizable(column)"
+                            >
+                                <ng-template
+                                    ngx-datatable-header-template
+                                    let-value="value"
+                                    let-allRowsSelected="allRowsSelected"
+                                    let-selectFn="selectFn"
+                                >
+                                    <input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600" [checked]="allRowsSelected" (change)="selectFn(!allRowsSelected)" />
+                                </ng-template>
+                                <ng-template
+                                    ngx-datatable-cell-template
+                                    let-value="value"
+                                    let-isSelected="isSelected"
+                                    let-onCheckboxChangeFn="onCheckboxChangeFn"
+                                >
+                                <input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600" [checked]="isSelected" (change)="onCheckboxChangeFn($event)" />
+                                </ng-template>
+                            </ngx-datatable-column>
+
+                        </ng-container>
+                    </ngx-datatable>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

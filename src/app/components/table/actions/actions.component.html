@@ -1,0 +1,45 @@
+<div class="flex justify-end">
+    <div *ngFor="let button of rowActions; let i = index;">
+        <button
+            type="button"
+            *ngIf="button.type === 'link' && row.id"
+            (click)="rowClick(row, button.name)"
+            class="min-w-10 min-h-7 h-7 px-2 mr-1"
+            mat-flat-button [color]="'primary'"
+            >
+            <mat-icon
+                class="icon-size-5"
+                [svgIcon]="'heroicons_solid:' + button.icon"></mat-icon>
+        </button>
+        <button
+            type="button"
+            *ngIf="button.type === 'action'"
+            (click)="rowClick(row, button.name)"
+            class="min-w-10 min-h-7 h-7 px-2 bg-red-600 text-white mr-1"
+            mat-flat-button>
+            <mat-icon
+                class="icon-size-4"
+                [svgIcon]="'heroicons_solid:' + button.icon"></mat-icon>
+        </button>
+    </div>
+    <div *ngIf="currentDropDownActions && currentDropDownActions.length">
+        <button
+            mat-button
+            [matMenuTriggerFor]="menu"
+            class="min-w-10 min-h-7 h-7 bg-gray-100 px-2 text-black"
+        >
+        <mat-icon class="icon-size-4" svgIcon="mat_solid:dehaze"></mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+            <ng-container *ngFor="let option of currentDropDownActions" >
+            <button 
+                mat-menu-item
+                (click)="dropDownActionClick(option)"
+                *ngIf="getCondition(row, option)"
+            >
+            <i *ngIf="option.icon" class="mr-2" [ngClass]="option.icon"></i>{{ option.label }}
+        </button>
+    </ng-container>
+        </mat-menu>
+    </div>
+</div>

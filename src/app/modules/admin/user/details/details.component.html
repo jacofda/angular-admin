@@ -1,0 +1,76 @@
+<div class="flex flex-col flex-auto min-w-0">
+    <!-- Header -->
+    <div *ngIf="!child"
+        class="flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between p-6 sm:py-8 sm:px-10 border-b bg-card dark:bg-transparent">
+        <div class="flex-1 min-w-0">
+            <!-- Breadcrumbs -->
+            <div class="flex flex-wrap items-center font-medium">
+                <div>
+                    <a routerLink="/users" class="whitespace-nowrap text-primary-500">Utenti</a>
+                </div>
+                <div class="flex items-center ml-1 whitespace-nowrap">
+                    <mat-icon class="icon-size-5 text-secondary" svgIcon="heroicons_solid:chevron-right"></mat-icon>
+                    <a class="ml-1 text-primary-500">{{ item?.id ?? 'Nuovo' }}</a>
+                </div>
+            </div>
+            <!-- Title -->
+            <div class="mt-2">
+                <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate">
+                    {{ item?.titolo ?? 'Nuovo' }}
+                </h2>
+            </div>
+        </div>
+    </div>
+
+    <!-- Progressbar -->
+    <mat-progress-bar mode="indeterminate" *ngIf="isLoading"></mat-progress-bar>
+
+    <!-- Main -->
+    <div class="flex-auto" [ngClass]="child ? 'py-4 px-0 sm:py-2 sm:px-0' : 'p-6 sm:p-10'" *ngIf="form">
+        <form [formGroup]="form" class="flex flex-col bg-card rounded-2xl shadow overflow-hidden">
+            <div class="flex flex-col p-8 pb-0">
+                <mat-form-field class="fuse-mat-dense flex-auto mb-3" subscriptSizing="dynamic">
+                    <mat-label>Nome</mat-label>
+                    <input matInput formControlName="name" #name/>
+                    <mat-error *ngIf="form.controls['name'].invalid">
+                        <validation-errors [form]="form.controls['name']"></validation-errors>
+                    </mat-error>
+                </mat-form-field>
+                <mat-form-field class="fuse-mat-dense flex-auto mb-3" subscriptSizing="dynamic">
+                    <mat-label>Email</mat-label>
+                    <input matInput formControlName="email" #email/>
+                    <mat-error *ngIf="form.controls['email'].invalid">
+                        <validation-errors [form]="form.controls['email']"></validation-errors>
+                    </mat-error>
+                </mat-form-field>
+                <div class="fuse-mat-dense mb-5">
+                    <mat-label>Ruolo</mat-label>
+                    <form-select
+                        [formGroup]="form"
+                        formName="role_id"
+                        [preload]="true"
+                        [searchFn]="this._roleService.list({ paginate: false })"
+                        (search)="selectFormSearch(this._roleService.list({ paginate: false, title: $event }))"
+                        bindLabel="title"
+                        bindValue="id"
+                        [multiple]="false"
+                        appearance="outline"
+                        (change)="form.get('permissions').setValue($event?.permissions ?? [])"
+                    />
+                    <mat-error class="text-sm" *ngIf="form.controls['role_id'].invalid && form?.controls['role_id'].touched">
+                        <validation-errors [form]="form.controls['role_id']"></validation-errors>
+                    </mat-error>
+                </div>
+            </div>
+
+            <form-permissions-select
+                [permissions]="form.get('permissions').value"
+                (permissionsChange)="form.get('permissions').setValue($event)"
+            />
+
+            <!-- Navigation Bar -->
+            <form-navigation (goBack)="goToBack()" (submit)="submit()" (salvacontinua)="submit(true)" [isChild]="child"></form-navigation>
+        </form>
+    </div>
+
+</div>

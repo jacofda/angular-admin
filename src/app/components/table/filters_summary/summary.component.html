@@ -1,0 +1,18 @@
+<div class="flex w-full px-4 items-center overflow-x-auto">
+    <div *ngIf="activeFilters.length" class="mr-3 hidden sm:flex">
+        <b>Ricerca attiva:</b>
+    </div>
+    <div class="flex mt-2">
+        <mat-chip-row 
+            class="text-sm mr-2 mb-1"
+            *ngFor="let item of activeFilters"
+            (removed)="removeFilterEvent(item.key)"
+            [editable]="true"
+        >
+            <span class="font-bold">{{ item.label }}:</span> {{ item.value }}
+            <button matChipRemove [attr.aria-label]="'remove ' + item">
+            <mat-icon>cancel</mat-icon>
+            </button>
+        </mat-chip-row>
+    </div>
+</div>

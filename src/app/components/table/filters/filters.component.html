@@ -1,0 +1,94 @@
+<div class="flex flex-col md:flex-row w-full" (keydown.enter)="searchClick()">
+    <div class="flex flex-col sm:flex-row w-full grow px-4 sm:px-0 overflow-x-auto">
+        <ng-container *ngFor="let filter of filters">
+            <mat-form-field *ngIf="filter.type === 'select'" class="fuse-mat-dense mx-2" [ngClass]="filter.size">
+                <mat-label>{{ filter.label }}</mat-label>
+                <mat-select [(value)]="searchInputs[filter.name]">
+                    <mat-option>Nessuno</mat-option>
+                    <mat-option *ngFor="let option of filter.options" [value]="option[filter.track_value ?? 'id']">
+                        {{ option[filter.track_label ?? 'name'] }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <mat-form-field *ngIf="filter.type === 'text'" class="fuse-mat-dense mx-2" [ngClass]="filter.size">
+                <mat-label>{{ filter.label }}</mat-label>
+                <input matInput [(ngModel)]="searchInputs[filter.name]" />
+            </mat-form-field>
+
+            <mat-form-field *ngIf="filter.type === 'date'" class="fuse-mat-dense mx-2" [ngClass]="filter.size">
+                <mat-label>{{ filter.label }}</mat-label>
+                <input
+                    matInput
+                    [(ngModel)]="searchInputs[filter.name]"
+                    [matDatepicker]="picker"
+                    />
+                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+        </ng-container>
+    </div>
+
+    <div class="flex flex-row justify-start items-center sm:justify-end p-4 ml-24 sm:p-0">
+        <button
+            type="button"
+            (click)="resetFilters()"
+            class="min-w-14 min-h-9 px-2 bg-transparent"
+            mat-flat-button
+        >
+            <i class="fa-thin fa-filter-circle-xmark"></i>
+            <span class="ml-2 mr-1">Reset Filtri</span>
+        </button>
+        <button
+            class="ml-2 px-4"
+            mat-flat-button
+            [color]="'accent'"
+            (click)="searchClick()"
+        >
+            <i class="fa-thin fa-filters"></i>
+            <span class="ml-2 mr-1">Applica Filtri</span>
+        </button>
+        <button
+            mat-icon-button
+            [matMenuTriggerFor]="menu"
+            #menuTrigger="matMenuTrigger"
+            class="min-w-10 min-h-7 h-7 bg-transparent ml-1 p-5 text-black"
+        >
+        <i class="fa-regular fa-grip-dots-vertical fa-sm"></i>
+        </button>
+        <mat-menu #menu="matMenu">
+            <button
+                *ngIf="!child"
+                mat-menu-item
+                (click)="saveScenario()"
+            >
+            <i class="fa-thin fa-cloud-arrow-up mr-2"></i>Salva Scenario</button>
+            <hr class="my-0" *ngIf="!child">
+            <div class="flex justify-between "  *ngFor="let scenario of scenari">
+                <button
+                    *ngIf="!child"
+                    mat-menu-item
+                    (click)="loadScenario(scenario)"
+                    class="pr-15"
+                >
+                <i class="fa-thin fa-table mr-2"></i>{{scenario.nome}}
+                <button
+                    (click)="deleteScenario($event, scenario)"
+                    mat-icon
+                    color="primary"
+                    class="p-0"
+                    style="position: absolute; right: 20px"
+                >
+                <i class="ml-8 fa-solid fa-trash-xmark"></i></button>
+                </button>
+            </div>
+            <hr class="my-0" *ngIf="!child">
+            <button
+                mat-menu-item
+                (click)="resetTable()"
+            >
+            <i class="fa-thin fa-broom-wide mr-2"></i>Reset Tabella
+            </button>
+        </mat-menu>
+    </div>
+</div>

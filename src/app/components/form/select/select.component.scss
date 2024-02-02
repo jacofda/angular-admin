@@ -1,0 +1,18 @@
+.ng-dropdown-panel.ng-select-bottom {
+    margin-top: 1.20rem;
+}
+
+.ng-select {
+    padding-bottom: inherit;
+}
+
+.ng-select {
+    &.ng-invalid {
+        &.ng-touched {
+            .ng-select-container.ng-appearance-outline:after {
+                border: 1px solid #dc2626 !important;
+            }
+        }
+    }
+    
+}

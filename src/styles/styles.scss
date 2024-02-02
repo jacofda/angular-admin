@@ -1,0 +1,123 @@
+/* ----------------------------------------------------------------------------------------------------- */
+/*  @ Import/write your custom styles here.
+/*  @ Styles from this file will override 'vendors.scss' and Fuse's base styles.
+/* ----------------------------------------------------------------------------------------------------- */
+
+@import '~@ng-select/ng-select/themes/material.theme.css';
+@import '../../node_modules/@swimlane/ngx-datatable/index.css';
+@import '../../node_modules/@swimlane/ngx-datatable/themes/material.css';
+@import '../../node_modules/@swimlane/ngx-datatable/themes/dark.scss';
+@import '../../node_modules/@swimlane/ngx-datatable/assets/icons.css';
+
+.ngx-datatable.material {
+    box-shadow: none !important;
+}
+
+.datatable-scroll {
+    width: inherit !important;
+}
+
+.mat-mdc-menu-panel {
+    border-radius: 10px !important;
+}
+
+.table-dark {
+    background-color: transparent !important;
+    .datatable-body-cell {
+        color: white !important;
+    }
+    .datatable-row-odd {
+        background-color: #11111123 !important;
+    }
+    .datatable-header-cell {
+        color: white !important;
+        background-color: transparent !important;
+    }
+
+    .datatable-body-row:hover .datatable-row-group {
+        background-color: rgb(15, 23, 42) !important;
+    }
+
+    .datatable-body-row:hover {
+        background-color: rgb(15, 23, 42) !important;
+    }
+    .pager li a {
+        color: white !important;
+    }
+    .page-count {
+        color: white;
+    }
+}
+
+.ng-select .ng-select-container.ng-appearance-outline {
+    min-height: 50px;
+}
+.ng-select.ng-select-single .ng-select-container.ng-appearance-outline .ng-arrow-wrapper {
+    bottom: 12px;
+}
+.ng-select .ng-select-container.ng-appearance-outline:hover:after {
+    border-color: rgba(var(--fuse-border-rgb), var(--tw-border-opacity)) !important;
+    border-width: 1px !important;
+}
+.ng-select.ng-select-single .ng-select-container.ng-appearance-outline .ng-clear-wrapper {
+    bottom: 10px;
+}
+
+// .ng-select .ng-select-container.ng-appearance-outline:after {
+// --tw-border-opacity: 1 !important;
+// border-color: rgb(203 213 225 / var(--tw-border-opacity)) !important;
+// --tw-bg-opacity: 1 !important;
+// background-color: rgb(255 255 255 / var(--tw-bg-opacity)) !important;
+// --tw-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05) !important;
+// --tw-shadow-colored: 0 1px 2px 0 var(--tw-shadow-color) !important;
+// box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow) !important;
+// }
+
+body.dark .ng-value > span {
+    color: rgb(221, 221, 221) !important;
+}
+body.dark .ng-select.ng-select-single .ng-select-container.ng-appearance-outline .ng-clear-wrapper {
+    color: rgb(221, 221, 221) !important;
+}
+
+body.dark .ng-select .ng-select-container.ng-appearance-outline:after {
+    --tw-border-opacity: 1 !important;
+    border-color: rgb(100 116 139 / var(--tw-border-opacity)) !important;
+}
+body.dark .ng-dropdown-panel {
+    background-color: #222f3e;
+    color: #fff;
+}
+body.dark .ng-dropdown-panel .ng-dropdown-panel-items .ng-option.ng-option-marked {
+    color: #fff;
+}
+
+body.dark .ng-dropdown-panel .ng-dropdown-panel-items .ng-option {
+    color: #fff;
+}
+
+// body.dark .ng-dropdown-panel {
+//     background-color: #424242;
+// }
+
+// body.dark .ng-dropdown-panel .ng-dropdown-panel-items .ng-option.ng-option-marked {
+//     color: #fff;
+// }
+
+// body.dark .ng-dropdown-panel .ng-dropdown-panel-items .ng-option {
+//     color: #fff;
+// }
+
+// body.dark option:hover:not(.mat-option-disabled) {
+//     background: hsla(0, 0%, 100%, 0.04);
+// }
+
+//.mat-mdc-form-field.mat-form-field-appearance-fill.fuse-mat-dense .mat-mdc-text-field-wrapper .mat-mdc-form-field-flex .mat-mdc-form-field-infix
+//{
+//    min-height:35px;
+//}
+
+
+.fuse-vertical-navigation-item-icon[class*=" fa-"] {
+    font-size: 1rem !important;
+}

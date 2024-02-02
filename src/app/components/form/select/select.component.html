@@ -1,0 +1,17 @@
+<div [formGroup]="formGroup">
+    <ng-select
+    [items]="currentItems"
+    [formControlName]="formName"
+    [bindLabel]="bindLabel"
+    [bindValue]="bindValue"
+    [appearance]="appearance"
+    dropdownPosition="bottom"
+    [class]="customclass" 
+    [loading]="loading"
+    [multiple]="multiple"
+    [searchable]="searchable"
+    [readonly]="readonly"
+    (search)="searchValue($event)"
+    (change)="changeValue($event)"
+/>
+</div>

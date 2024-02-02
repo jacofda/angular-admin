@@ -1,0 +1,4 @@
+<span *ngIf="form.errors.required">Il campo è richiesto</span>
+<span *ngIf="form.errors.minlength">Il campo deve essere lungo almeno {{ form.errors.minlength.requiredLength }} caratteri</span>
+<span *ngIf="form.errors.maxlength">Il campo deve essere lungo massimo {{ form.errors.maxlength.requiredLength }} caratteri</span>
+<span *ngIf="form.errors.email">Il campo deve essere una mail in formato valido</span>

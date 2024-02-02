@@ -1,0 +1,109 @@
+<div class="flex flex-col flex-auto min-w-0">
+    <!-- Header -->
+    <div
+        *ngIf="!child"
+        class="flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between p-6 sm:py-8 sm:px-10 border-b bg-card dark:bg-transparent">
+        <div class="flex-1 min-w-0">
+            <!-- Breadcrumbs -->
+            <div class="flex flex-wrap items-center font-medium">
+                <div>
+                    <a routerLink="/case-studies" class="whitespace-nowrap text-primary-500">Casestudy</a>
+                </div>
+                <div class="flex items-center ml-1 whitespace-nowrap">
+                    <mat-icon class="icon-size-5 text-secondary" svgIcon="heroicons_solid:chevron-right"></mat-icon>
+                    <a class="ml-1 text-primary-500">{{ item?.id ?? 'Nuovo' }}</a>
+                </div>
+            </div>
+            <!-- Title -->
+            <div class="mt-2">
+                <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate">
+                    {{ item?.titolo ?? 'Nuovo' }}
+                </h2>
+            </div>
+        </div>
+    </div>
+
+    <!-- Progressbar -->
+    <mat-progress-bar mode="indeterminate" *ngIf="isLoading"></mat-progress-bar>
+
+    <!-- Main -->
+    <div class="flex-auto" [ngClass]="child ? 'py-4 px-0 sm:py-2 sm:px-0' : 'p-6 sm:p-10'" *ngIf="form">
+        <form [formGroup]="form" class="flex flex-col p-8 pb-0 bg-card rounded-2xl shadow overflow-hidden">
+            <mat-form-field class="fuse-mat-dense flex-auto mb-3" subscriptSizing="dynamic">
+                <mat-label>Titolo</mat-label>
+                <input matInput formControlName="titolo" #titolo />
+                <mat-error *ngIf="form.controls['titolo'].invalid">
+                    <validation-errors [form]="form.controls['titolo']"></validation-errors>
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="flex-auto mb-3" subscriptSizing="dynamic">
+                <mat-label>Abstract</mat-label>
+                <textarea matInput formControlName="abstract" #abstract></textarea>
+                <mat-error *ngIf="form.controls['abstract'].invalid">
+                    <validation-errors [form]="form.controls['abstract']"></validation-errors>
+                </mat-error>
+            </mat-form-field>
+
+            <div class="flex-auto mb-3 mt-3">
+                <mow-editor [formParent]="form" [scheme]="scheme" formName="body" label="Body*"></mow-editor>
+                <mat-error class="text-sm" *ngIf="form.controls['body'].invalid && form?.controls['body'].touched">
+                    <validation-errors [form]="form.controls['body']"></validation-errors>
+                </mat-error>
+            </div>
+
+            <div class="flex-auto mb-3 mt-3">
+                <div class="fuse-mat-dense mb-5">
+                    <mat-label>Cliente</mat-label>
+                    <form-select
+                        [formGroup]="form"
+                        formName="client_id"
+                        [preload]="true"
+                        [searchFn]="this._clientService.list({ paginate: false })"
+                        (search)="selectFormSearch(this._clientService.list({ paginate: false, denominazione: $event }))"
+                        bindLabel="titolo"
+                        bindValue="id"
+                        [multiple]="false"
+                        appearance="outline" />
+                    <mat-error class="text-sm" *ngIf="form.controls['client_id'].invalid && form?.controls['client_id'].touched">
+                        <validation-errors [form]="form.controls['client_id']"></validation-errors>
+                    </mat-error>
+                </div>
+            </div>
+
+            <div class="flex-auto mb-3 mt-3">
+                <div class="fuse-mat-dense mb-5">
+                    <mat-label>Categoria</mat-label>
+                    <form-select
+                        [formGroup]="form"
+                        formName="category_id"
+                        [preload]="true"
+                        [searchFn]="this._categoryService.list({ paginate: false })"
+                        (search)="selectFormSearch(this._categoryService.list({ paginate: false, denominazione: $event }))"
+                        bindLabel="nome"
+                        bindValue="id"
+                        [multiple]="false"
+                        appearance="outline" />
+                    <mat-error class="text-sm" *ngIf="form.controls['category_id'].invalid && form?.controls['category_id'].touched">
+                        <validation-errors [form]="form.controls['category_id']"></validation-errors>
+                    </mat-error>
+                </div>
+            </div>
+
+            <hr class="my-2" />
+            <single-upload
+                class="mt-5 mb-2 w-full sm:w-2/3 md:w-1/2"
+                label="Immagine principale"
+                [file]="form.value.mainImage"
+                (selected)="setSelectedMainImage($event)"></single-upload>
+            <mat-error class="text-sm" *ngIf="form.controls['mainImage'].invalid && form?.controls['mainImage'].touched">
+                <validation-errors [form]="form.controls['mainImage']"></validation-errors>
+            </mat-error>
+
+            <hr class="my-2" />
+
+            <!-- Navigation Bar -->
+            <form-navigation (goBack)="goToBack()" (submit)="submit()" (salvacontinua)="submit(true)" [isChild]="child"></form-navigation>
+        </form>
+    </div>
+</div>
